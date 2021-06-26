@@ -18,7 +18,9 @@ export const connection_init: MessageHandler<ConnectionInitMessage> = (
       payload: res,
     });
     await c.mapper.put(connection);
-    return sendMessage({
+    const sendFunction = c.onSendMessage ?? sendMessage;
+
+    return await sendFunction({
       ...event.requestContext,
       message: { type: MessageType.ConnectionAck },
     });
