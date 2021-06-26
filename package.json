@@ -27,7 +27,8 @@
     "start": "microbundle --target node -f cjs watch",
     "build": "microbundle --target node -f cjs",
     "prepack": "rm -rf dist && npm run build",
-    "prettier:check": "prettier -c ."
+    "format": "prettier -w .",
+    "lint": "prettier -c ."
   },
   "repository": {
     "type": "git",
