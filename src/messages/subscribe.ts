@@ -48,7 +48,9 @@ export const subscribe: MessageHandler<SubscribeMessage> = (c) => async ({
     );
 
     if (!('operation' in execContext)) {
-      return sendMessage({
+      const sendFunction = c.onSendMessage ?? sendMessage;
+
+      return sendFunction({
         ...event.requestContext,
         message: {
           type: MessageType.Next,
