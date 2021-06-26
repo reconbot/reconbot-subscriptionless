@@ -45,6 +45,7 @@ export type ServerArgs = {
       'connectionId' | 'domainName' | 'stage'
     >
   ) => any;
+  onDeleteConnection?: (a: Pick<APIGatewayEventRequestContext, 'connectionId' | 'domainName' | 'stage'>) => any;
 };
 
 type MaybePromise<T> = T | Promise<T>;

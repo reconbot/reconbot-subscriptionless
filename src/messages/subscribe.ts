@@ -98,7 +98,8 @@ export const subscribe: MessageHandler<SubscribeMessage> = (c) => async ({
     );
   } catch (err) {
     await promisify(() => c.onError?.(err, { event, message }));
-    await deleteConnection(event.requestContext);
+    const deleteConnectionFunc = c.onDeleteConnection ?? deleteConnection
+    await deleteConnectionFunc(event.requestContext);
   }
 };
 
