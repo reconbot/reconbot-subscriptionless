@@ -32,14 +32,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/reconbot/subscriptionless-reconbot.git"
+    "url": "git+https://github.com/reconbot/reconbot-subscriptionless.git"
   },
   "author": "Francis Gulotta",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/reconbot/subscriptionless-reconbot/issues"
+    "url": "https://github.com/reconbot/reconbot-subscriptionless/issues"
   },
-  "homepage": "https://github.com/reconbot/subscriptionless-reconbot#readme",
+  "homepage": "https://github.com/reconbot/reconbot-subscriptionless#readme",
   "devDependencies": {
     "@types/aws-lambda": "^8.10.72",
     "aws-sdk": "^2.844.0",
