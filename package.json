@@ -1,7 +1,7 @@
 {
-  "name": "subscriptionless",
-  "version": "1.0.0-alpha.2",
-  "description": "GraphQL subscriptions using AWS Lambda and API Gateway Websockets",
+  "name": "@reconbot/subscriptionless",
+  "version": "0.0.1",
+  "description": "a hopefully temporary fork of subscriptionless a GraphQL subscriptions using AWS Lambda and API Gateway Websockets",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -31,14 +31,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/andyrichardson/subscriptionless.git"
+    "url": "git+https://github.com/reconbot/subscriptionless-reconbot.git"
   },
-  "author": "Andy Richardson (andyrichardson)",
+  "author": "Francis Gulotta",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/andyrichardson/subscriptionless/issues"
+    "url": "https://github.com/reconbot/subscriptionless-reconbot/issues"
   },
-  "homepage": "https://github.com/andyrichardson/subscriptionless#readme",
+  "homepage": "https://github.com/reconbot/subscriptionless-reconbot#readme",
   "devDependencies": {
     "@types/aws-lambda": "^8.10.72",
     "aws-sdk": "^2.844.0",

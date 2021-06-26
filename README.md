@@ -1,5 +1,7 @@
 ## About
 
+This is a hopefully temporary fork of https://github.com/andyrichardson/subscriptionless. All changes here will be eventually pushed into the primary project or abandoned.
+
 GraphQL subscriptions for AWS Lambda and API Gateway WebSockets.
 
 Have all the functionality of GraphQL subscriptions on a stateful server without the cost.
