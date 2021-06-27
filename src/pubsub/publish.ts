@@ -32,7 +32,7 @@ export const publish = (c: ServerClosure) => async (event: PubSubEvent) => {
     await sendFunction({
       ...sub.requestContext,
       message: {
-        id: sub.id,
+        id: sub.subscriptionId,
         type: MessageType.Next,
         payload: result,
       },
