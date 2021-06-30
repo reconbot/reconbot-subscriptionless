@@ -1,5 +1,5 @@
 import { attribute, hashKey } from '@aws/dynamodb-data-mapper-annotations';
-import { APIGatewayEventRequestContext } from 'aws-lambda';
+import { APIGatewayWebSocketRequestContext } from '../types';
 
 /**
  * Connection established with `connection_init`
@@ -13,8 +13,11 @@ export class Connection {
   createdAt: Date;
 
   @attribute()
-  requestContext: APIGatewayEventRequestContext;
+  requestContext: APIGatewayWebSocketRequestContext;
 
   @attribute()
   payload: Record<string, string>;
+
+  @attribute({ type: 'Number' })
+  expiresAt: number;
 }

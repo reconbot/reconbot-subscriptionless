@@ -16,17 +16,15 @@ export const connection_init: MessageHandler<ConnectionInitMessage> = (
       id: event.requestContext.connectionId!,
       requestContext: event.requestContext,
       payload: res,
+      expiresAt: Math.round(Date.now() / 1000) + 60 * 60 * 3, // three hours from now
     });
     await c.mapper.put(connection);
-    const sendFunction = c.onSendMessage ?? sendMessage;
-
-    return await sendFunction({
+    return sendMessage(c, {
       ...event.requestContext,
       message: { type: MessageType.ConnectionAck },
     });
   } catch (err) {
     await promisify(() => c.onError?.(err, { event, message }));
-    const deleteConnectionFunc = c.onDeleteConnection ?? deleteConnection
-    await deleteConnectionFunc(event.requestContext);
+    await deleteConnection(c, event.requestContext);
   }
 };

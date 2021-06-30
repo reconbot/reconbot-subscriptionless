@@ -2,50 +2,38 @@ import {
   ConnectionInitMessage,
   SubscribeMessage,
   CompleteMessage,
-  ConnectionAckMessage,
-  NextMessage,
 } from 'graphql-ws';
 import { DataMapper } from '@aws/dynamodb-data-mapper';
-import { APIGatewayEvent, APIGatewayEventRequestContext } from 'aws-lambda';
+import {
+  APIGatewayEventRequestContext,
+  APIGatewayProxyEvent,
+} from 'aws-lambda';
 import { GraphQLSchema } from 'graphql';
-import { DynamoDB } from 'aws-sdk';
+import { ApiGatewayManagementApi, DynamoDB } from 'aws-sdk';
 import { Subscription, Connection } from './model';
-import { ErrorMessage } from 'aws-sdk/clients/cloudwatchevents';
 
 export type ServerArgs = {
   schema: GraphQLSchema;
   dynamodb: DynamoDB;
+  apiGatewayManagementApi?: ApiGatewayManagementApi;
   context?: ((arg: { connectionParams: any }) => object) | object;
   tableNames?: Partial<TableNames>;
-  onConnect?: (e: { event: APIGatewayEvent }) => MaybePromise<void>;
-  onDisconnect?: (e: { event: APIGatewayEvent }) => MaybePromise<void>;
+  onConnect?: (e: { event: APIGatewayWebSocketEvent }) => MaybePromise<void>;
+  onDisconnect?: (e: { event: APIGatewayWebSocketEvent }) => MaybePromise<void>;
   /* Takes connection_init event and returns payload to be persisted (may include auth steps) */
   onConnectionInit?: (e: {
-    event: APIGatewayEvent;
+    event: APIGatewayWebSocketEvent;
     message: ConnectionInitMessage;
   }) => MaybePromise<object>;
   onSubscribe?: (e: {
-    event: APIGatewayEvent;
+    event: APIGatewayWebSocketEvent;
     message: SubscribeMessage;
   }) => MaybePromise<void>;
   onComplete?: (e: {
-    event: APIGatewayEvent;
+    event: APIGatewayWebSocketEvent;
     message: CompleteMessage;
   }) => MaybePromise<void>;
   onError?: (error: any, context: any) => void;
-  onSendMessage?: (
-    event: {
-      message:
-        | ConnectionAckMessage
-        | NextMessage
-        | CompleteMessage
-        | ErrorMessage;
-    } & Pick<
-      APIGatewayEventRequestContext,
-      'connectionId' | 'domainName' | 'stage'
-    >
-  ) => any;
-  onDeleteConnection?: (a: Pick<APIGatewayEventRequestContext, 'connectionId' | 'domainName' | 'stage'>) => any;
 };
 
 type MaybePromise<T> = T | Promise<T>;
@@ -84,3 +72,13 @@ export type SubscribePsuedoIterable = {
 export type SubscribeArgs = any[];
 
 export type Class = { new (...args: any[]): any };
+
+export interface APIGatewayWebSocketRequestContext
+  extends APIGatewayEventRequestContext {
+  connectionId: string;
+  domainName: string;
+}
+
+export interface APIGatewayWebSocketEvent extends APIGatewayProxyEvent {
+  requestContext: APIGatewayWebSocketRequestContext;
+}

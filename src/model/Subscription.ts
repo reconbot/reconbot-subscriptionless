@@ -3,7 +3,7 @@ import {
   hashKey,
   rangeKey,
 } from '@aws/dynamodb-data-mapper-annotations';
-import { APIGatewayEventRequestContext } from 'aws-lambda';
+import { APIGatewayWebSocketRequestContext } from '../types';
 
 /**
  * Active subscriptions
@@ -41,7 +41,7 @@ export class Subscription {
   connectionParams: object;
 
   @attribute()
-  requestContext: APIGatewayEventRequestContext;
+  requestContext: APIGatewayWebSocketRequestContext;
 
   @attribute()
   subscription: {
@@ -52,4 +52,7 @@ export class Subscription {
     variableValues?: any;
     operationName?: string | null;
   };
+
+  @attribute({ type: 'Number' })
+  expiresAt: number;
 }

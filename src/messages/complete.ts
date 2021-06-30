@@ -59,7 +59,6 @@ export const complete: MessageHandler<CompleteMessage> = (c) => async ({
     await Promise.all(deletions);
   } catch (err) {
     await promisify(() => c.onError?.(err, { event, message }));
-    const deleteConnectionFunc = c.onDeleteConnection ?? deleteConnection
-    await deleteConnectionFunc(event.requestContext);
+    await deleteConnection(c, event.requestContext);
   }
 };

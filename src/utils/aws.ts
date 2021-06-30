@@ -1,43 +1,63 @@
 import { ApiGatewayManagementApi } from 'aws-sdk';
-import { APIGatewayEventRequestContext } from 'aws-lambda';
 import {
   ConnectionAckMessage,
   NextMessage,
   CompleteMessage,
   ErrorMessage,
 } from 'graphql-ws';
+import { ServerClosure } from '../types';
 
-export const sendMessage = (
-  a: {
+export const sendMessage = async (
+  c: ServerClosure,
+  {
+    connectionId: ConnectionId,
+    domainName,
+    stage,
+    message,
+  }: {
     message:
       | ConnectionAckMessage
       | NextMessage
       | CompleteMessage
       | ErrorMessage;
-  } & Pick<
-    APIGatewayEventRequestContext,
-    'connectionId' | 'domainName' | 'stage'
-  >
-) =>
-  new ApiGatewayManagementApi({
-    apiVersion: 'latest',
-    endpoint: `${a.domainName}/${a.stage}`,
-  })
+    connectionId: string;
+    domainName: string;
+    stage: string;
+  }
+): Promise<void> => {
+  const api =
+    c.apiGatewayManagementApi ??
+    new ApiGatewayManagementApi({
+      apiVersion: 'latest',
+      endpoint: `${domainName}/${stage}`,
+    });
+
+  await api
     .postToConnection({
-      ConnectionId: a.connectionId!,
-      Data: JSON.stringify(a.message),
+      ConnectionId,
+      Data: JSON.stringify(message),
     })
     .promise();
+};
 
-export const deleteConnection = (
-  a: Pick<
-    APIGatewayEventRequestContext,
-    'connectionId' | 'domainName' | 'stage'
-  >
-) =>
-  new ApiGatewayManagementApi({
-    apiVersion: 'latest',
-    endpoint: `${a.domainName}/${a.stage}`,
-  })
-    .deleteConnection({ ConnectionId: a.connectionId! })
-    .promise();
+export const deleteConnection = async (
+  c: ServerClosure,
+  {
+    connectionId: ConnectionId,
+    domainName,
+    stage,
+  }: {
+    connectionId: string;
+    domainName: string;
+    stage: string;
+  }
+): Promise<void> => {
+  const api =
+    c.apiGatewayManagementApi ??
+    new ApiGatewayManagementApi({
+      apiVersion: 'latest',
+      endpoint: `${domainName}/${stage}`,
+    });
+
+  await api.deleteConnection({ ConnectionId }).promise();
+};

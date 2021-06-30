@@ -1,11 +1,15 @@
-import { Handler, APIGatewayEvent } from 'aws-lambda';
+import { Handler } from 'aws-lambda';
 import { GRAPHQL_TRANSPORT_WS_PROTOCOL, MessageType } from 'graphql-ws';
-import { ServerClosure, WebsocketResponse } from './types';
+import {
+  APIGatewayWebSocketEvent,
+  ServerClosure,
+  WebsocketResponse,
+} from './types';
 import { complete, connection_init, subscribe, disconnect } from './messages';
 
 export const handleWebSocket = (
   c: ServerClosure
-): Handler<APIGatewayEvent, WebsocketResponse> => async (event) => {
+): Handler<APIGatewayWebSocketEvent, WebsocketResponse> => async (event) => {
   if (!event.requestContext) {
     return {
       statusCode: 200,

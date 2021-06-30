@@ -48,9 +48,7 @@ export const subscribe: MessageHandler<SubscribeMessage> = (c) => async ({
     );
 
     if (!('operation' in execContext)) {
-      const sendFunction = c.onSendMessage ?? sendMessage;
-
-      return sendFunction({
+      return await sendMessage(c, {
         ...event.requestContext,
         message: {
           type: MessageType.Next,
@@ -92,14 +90,14 @@ export const subscribe: MessageHandler<SubscribeMessage> = (c) => async ({
           connectionId: event.requestContext.connectionId!,
           connectionParams,
           requestContext: event.requestContext,
+          expiresAt: Math.round(Date.now() / 1000) + 60 * 60 * 3, // three hours from now
         });
         await c.mapper.put(subscription);
       })
     );
   } catch (err) {
     await promisify(() => c.onError?.(err, { event, message }));
-    const deleteConnectionFunc = c.onDeleteConnection ?? deleteConnection
-    await deleteConnectionFunc(event.requestContext);
+    await deleteConnection(c, event.requestContext);
   }
 };
 
