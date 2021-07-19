@@ -2,6 +2,8 @@ import {
   ConnectionInitMessage,
   SubscribeMessage,
   CompleteMessage,
+  PingMessage,
+  PongMessage,
 } from 'graphql-ws';
 import { DataMapper } from '@aws/dynamodb-data-mapper';
 import {
@@ -9,7 +11,7 @@ import {
   APIGatewayProxyEvent,
 } from 'aws-lambda';
 import { GraphQLSchema } from 'graphql';
-import { ApiGatewayManagementApi, DynamoDB } from 'aws-sdk';
+import { ApiGatewayManagementApi, DynamoDB, StepFunctions } from 'aws-sdk';
 import { Subscription, Connection } from './model';
 
 export type ServerArgs = {
@@ -18,6 +20,11 @@ export type ServerArgs = {
   apiGatewayManagementApi?: ApiGatewayManagementApi;
   context?: ((arg: { connectionParams: any }) => object) | object;
   tableNames?: Partial<TableNames>;
+  pingpong?: {
+    machine: string;
+    delay: number;
+    timeout: number;
+  };
   onConnect?: (e: { event: APIGatewayWebSocketEvent }) => MaybePromise<void>;
   onDisconnect?: (e: { event: APIGatewayWebSocketEvent }) => MaybePromise<void>;
   /* Takes connection_init event and returns payload to be persisted (may include auth steps) */
@@ -32,6 +39,14 @@ export type ServerArgs = {
   onComplete?: (e: {
     event: APIGatewayWebSocketEvent;
     message: CompleteMessage;
+  }) => MaybePromise<void>;
+  onPing?: (e: {
+    event: APIGatewayWebSocketEvent;
+    message: PingMessage;
+  }) => MaybePromise<void>;
+  onPong?: (e: {
+    event: APIGatewayWebSocketEvent;
+    message: PongMessage;
   }) => MaybePromise<void>;
   onError?: (error: any, context: any) => void;
 };
@@ -72,6 +87,14 @@ export type SubscribePsuedoIterable = {
 export type SubscribeArgs = any[];
 
 export type Class = { new (...args: any[]): any };
+
+export type StateFunctionInput = {
+  connectionId: string;
+  domainName: string;
+  stage: string;
+  state: 'PING' | 'REVIEW' | 'ABORT';
+  seconds: number;
+};
 
 export interface APIGatewayWebSocketRequestContext
   extends APIGatewayEventRequestContext {

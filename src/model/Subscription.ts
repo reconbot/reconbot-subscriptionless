@@ -3,6 +3,7 @@ import {
   hashKey,
   rangeKey,
 } from '@aws/dynamodb-data-mapper-annotations';
+import { addHours } from '../utils';
 import { APIGatewayWebSocketRequestContext } from '../types';
 
 /**
@@ -53,6 +54,6 @@ export class Subscription {
     operationName?: string | null;
   };
 
-  @attribute({ type: 'Number' })
-  expiresAt: number;
+  @attribute({ defaultProvider: () => addHours(new Date(), 3) })
+  ttl: Date;
 }
