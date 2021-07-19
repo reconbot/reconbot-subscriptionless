@@ -3,6 +3,7 @@ import { validate, parse } from 'graphql';
 import {
   buildExecutionContext,
   assertValidExecutionArguments,
+  execute,
 } from 'graphql/execution/execute';
 import { MessageHandler } from './types';
 import {
@@ -58,6 +59,39 @@ export const subscribe: MessageHandler<SubscribeMessage> =
             },
           },
         });
+      }
+
+
+      if(execContext.operation.operation !== 'subscription') {
+        // todo reuse existing execContext
+        const result = await execute(
+          c.schema,
+          parse(message.payload.query),
+          undefined,
+          await constructContext(c)({ connectionParams }),
+          message.payload.variables,
+          message.payload.operationName,
+          undefined
+        );
+
+        await sendMessage(c)({
+          ...event.requestContext,
+          message: {
+            type: MessageType.Next,
+            id: message.id,
+            payload: result,
+          },
+        });
+
+        await sendMessage(c)({
+          ...event.requestContext,
+          message: {
+            type: MessageType.Complete,
+            id: message.id,
+          },
+        });
+
+        return
       }
 
       const [field, root, args, context, info] =
