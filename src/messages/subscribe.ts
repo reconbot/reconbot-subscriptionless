@@ -38,11 +38,13 @@ export const subscribe: MessageHandler<SubscribeMessage> =
         throw errors;
       }
 
+      const contextValue = await constructContext(c)({ connectionParams });
+
       const execContext = buildExecutionContext(
         c.schema,
         parse(message.payload.query),
         undefined,
-        await constructContext(c)({ connectionParams }),
+        contextValue,
         message.payload.variables,
         message.payload.operationName,
         undefined
@@ -63,12 +65,11 @@ export const subscribe: MessageHandler<SubscribeMessage> =
 
 
       if(execContext.operation.operation !== 'subscription') {
-        // todo reuse existing execContext
         const result = await execute(
           c.schema,
           parse(message.payload.query),
           undefined,
-          await constructContext(c)({ connectionParams }),
+          contextValue,
           message.payload.variables,
           message.payload.operationName,
           undefined
